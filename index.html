@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lamumu Whack 🎮</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Press Start 2P", cursive, sans-serif;
+      background: linear-gradient(270deg, #ff00ff, #00ffff, #ff9900, #00ff00);
+      background-size: 800% 800%;
+      animation: backgroundShift 12s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes backgroundShift {
+      0% {background-position:0% 50%}
+      50% {background-position:100% 50%}
+      100% {background-position:0% 50%}
+    }
+
+    /* 🔥 MADE BY WUKS Neon Header */
+    #credit {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 
+        0 0 5px #ff00ff,
+        0 0 10px #00ffff,
+        0 0 20px #ff00ff,
+        0 0 30px #00ffff;
+      animation: neonFlicker 2s infinite alternate;
+      z-index: 1000;
+    }
+
+    @keyframes neonFlicker {
+      0%   { opacity: 1; text-shadow: 0 0 5px #ff00ff, 0 0 15px #00ffff; }
+      50%  { opacity: 0.8; text-shadow: 0 0 10px #00ffff, 0 0 25px #ff00ff; }
+      100% { opacity: 1; text-shadow: 0 0 20px #ff00ff, 0 0 35px #00ffff; }
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+      margin-bottom: 15px;
+    }
+
+    #hud {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 600px;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      text-shadow: 0 0 5px #000;
+      z-index: 5;
+      position: relative;
+    }
+
+    #timerBar {
+      width: 100%;
+      max-width: 600px;
+      height: 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      z-index: 5;
+      position: relative;
+    }
+
+    #timerFill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+      transition: width 1s linear;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      z-index: 5;
+      position: relative;
+    }
+
+    .hole {
+      width: 110px;
+      height: 110px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: inset 0 0 15px #000;
+    }
+
+    .lamumu, .bonus {
+      position: absolute;
+      bottom: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      transition: bottom 0.25s ease-in-out;
+      filter: drop-shadow(0 0 8px #fff);
+    }
+
+    .show {
+      bottom: 0;
+      animation: bounce 0.25s ease;
+    }
+
+    @keyframes bounce {
+      0% { transform: translateX(-50%) scale(0.9); }
+      50% { transform: translateX(-50%) scale(1.05); }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+
+    .bonus {
+      filter: drop-shadow(0 0 15px gold);
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: translateX(-50%) rotate(0deg); }
+      to { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    #overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Floating glowing shield in the background */
+    #bgShield {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200px;
+      opacity: 0.18;
+      transform: translate(-50%, -50%);
+      animation: floatShield 25s linear infinite, neonGlow 2s ease-in-out infinite alternate;
+      z-index: 0;
+      pointer-events: none;
+      filter: drop-shadow(0 0 15px #00ffff) drop-shadow(0 0 30px #ff00ff);
+    }
+
+    @keyframes floatShield {
+      0%   { transform: translate(-50%, -50%) rotate(0deg) scale(1); top: 10%; left: 15%; }
+      25%  { transform: translate(-50%, -50%) rotate(90deg) scale(1.2); top: 70%; left: 25%; }
+      50%  { transform: translate(-50%, -50%) rotate(180deg) scale(0.9); top: 80%; left: 80%; }
+      75%  { transform: translate(-50%, -50%) rotate(270deg) scale(1.1); top: 20%; left: 75%; }
+      100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); top: 10%; left: 15%; }
+    }
+
+    @keyframes neonGlow {
+      from { filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #ff00ff); }
+      to   { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 40px #ff00ff); }
+    }
+
+    /* Glowing bonus shield inside the game */
+    .bonusShield {
+      filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #ff00ff);
+      animation: neonPulse 1.5s infinite alternate;
+    }
+
+    @keyframes neonPulse {
+      from { transform: scale(1); filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 25px #ff00ff); }
+      to   { transform: scale(1.1); filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 35px #ff00ff); }
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      background: #ff00ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
+    }
+
+    button:hover {
+      background: #00ffff;
+      box-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
+    }
+
+    .points {
+      position: absolute;
+      font-size: 1rem;
+      font-weight: bold;
+      animation: floatUp 1s ease forwards;
+      pointer-events: none;
+      text-shadow: 0 0 5px #000;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-50px); }
+    }
+
+    @media (max-width: 600px) {
+      .hole { width: 85px; height: 85px; }
+      .lamumu, .bonus { width: 70px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ✅ Credit text -->
+  <div id="credit">MADE BY WUKS</div>
+
+  <!-- Background floating glowing shield -->
+  <img id="bgShield" src="common shield.png" alt="Background Shield">
+
+  <div id="overlay">
+    <h1>Lamumu Whack 🎮</h1>
+    <p>Whack Lamumus for points! common badge = +10</p>
+    <button id="startBtn">Start Game</button>
+  </div>
+
+  <div id="hud">
+    <div>Score: <span id="score">0</span></div>
+    <div>High Score: <span id="highScore">0</span></div>
+  </div>
+  <div id="timerBar"><div id="timerFill"></div></div>
+  <div id="board"></div>
+</body>
+</html>
+
+
+  <script>
+    const overlay = document.getElementById("overlay");
+    const startBtn = document.getElementById("startBtn");
+    const board = document.getElementById("board");
+    const scoreEl = document.getElementById("score");
+    const highScoreEl = document.getElementById("highScore");
+    const timerFill = document.getElementById("timerFill");
+
+    let score = 0;
+    let highScore = localStorage.getItem("lamumuHigh") || 0;
+    highScoreEl.textContent = highScore;
+
+    let timeLeft = 30;
+    let gameTimer, spawnTimer;
+
+    const lamumus = [
+      { img: "blue lamumu.png", points: 1, color: "#00f" },
+      { img: "green lamumu.png", points: 2, color: "#0f0" },
+      { img: "orange lamumu.png", points: 3, color: "#ff9900" },
+      { img: "pink lamumu.png", points: 4, color: "#ff66cc" },
+      { img: "purple lamumu.png", points: 5, color: "#aa00ff" }
+    ];
+
+    const bonus = { img: "common shield.png", points: 10, color: "gold" };
+
+    const sounds = {
+      hit: new Audio("data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."), // <-- base64 whack sound
+      bonus: new Audio("data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..."), // <-- base64 powerup sound
+      miss: new Audio("data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA...")  // <-- base64 whoosh sound
+    };
+
+    function buildBoard(size = 3) {
+      board.innerHTML = "";
+      board.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      for (let i = 0; i < size * size; i++) {
+        const hole = document.createElement("div");
+        hole.className = "hole";
+        board.appendChild(hole);
+      }
+    }
+
+    function startGame() {
+      overlay.style.display = "none";
+      score = 0;
+      timeLeft = 30;
+      scoreEl.textContent = score;
+      timerFill.style.width = "100%";
+      buildBoard(3);
+
+      gameTimer = setInterval(() => {
+        timeLeft--;
+        timerFill.style.width = `${(timeLeft / 30) * 100}%`;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+
+      spawnTimer = setInterval(spawnLamumu, 800);
+    }
+
+    function spawnLamumu() {
+      const holes = document.querySelectorAll(".hole");
+      const hole = holes[Math.floor(Math.random() * holes.length)];
+
+      let chosen = Math.random() < 0.15 ? bonus : lamumus[Math.floor(Math.random() * lamumus.length)];
+      const img = document.createElement("img");
+      img.src = chosen.img;
+      img.className = chosen === bonus ? "bonus" : "lamumu";
+      hole.appendChild(img);
+
+      setTimeout(() => img.classList.add("show"), 50);
+
+      img.addEventListener("click", () => {
+        score += chosen.points;
+        scoreEl.textContent = score;
+        const pts = document.createElement("div");
+        pts.className = "points";
+        pts.style.color = chosen.color;
+        pts.style.left = "30%";
+        pts.style.top = "20%";
+        pts.textContent = `+${chosen.points}`;
+        hole.appendChild(pts);
+        setTimeout(() => pts.remove(), 1000);
+
+        (chosen === bonus ? sounds.bonus : sounds.hit).play();
+        img.remove();
+      });
+
+      setTimeout(() => {
+        if (img.parentElement) {
+          img.remove();
+          sounds.miss.play();
+        }
+      }, 1200);
+    }
+
+    function endGame() {
+      clearInterval(gameTimer);
+      clearInterval(spawnTimer);
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("lamumuHigh", highScore);
+        highScoreEl.textContent = highScore;
+      }
+      overlay.style.display = "flex";
+      overlay.innerHTML = `
+        <h1>Game Over</h1>
+        <p>Final Score: ${score}</p>
+        <p>High Score: ${highScore}</p>
+        <button id="restartBtn">Play Again</button>`;
+      document.getElementById("restartBtn").addEventListener("click", startGame);
+    }
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+</html>
+</html>
+
